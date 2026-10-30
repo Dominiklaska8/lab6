@@ -1,6 +1,6 @@
 ---
 title: "Lab 05 - Halloween Candies & Data Viz Improvement"
-author: "User1, User2, User3 and User4 - Team Name"
+author: "Dominik, Myles, Dang"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -23,7 +23,7 @@ knitr::include_graphics("img/Speaking-the-world.jpg")
 
 _Write your comments about image 1 below_
 
-
+In my opinion, it is an effective graph as it is neatly ordered and labelled, clearly showing you the top 10 most spoken languages around the world. It also shows the exact number of speakers rather than having to estimate from something like a bar graph where it is hard to tell the exact number of speakers.
 
 
 ## Image 2
@@ -34,6 +34,7 @@ knitr::include_graphics("img/rose-pop-density-total-area-bw.jpg")
 
 _Write your comments about image 2 below_
 
+Not effective whatsoever. Since it is a pie chart, you cannot tell which country has a greater population exactly. For example, does Poland or Italy have more? It is hard to tell. There is also no exact % shown which would have been useful as it would tell you the exact %. 
 
 
 
@@ -45,7 +46,7 @@ knitr::include_graphics("img/life-expectancy-rule-of-law.png")
 
 _Write your comments about image 3 below_
 
-
+In my opinion, this graph is not as effective. It is pretty hard to tell what each dot exactly represents and it is also missing a line of best fit which would have been useful. Also the life expectancy axis is missing numerical values and what does 'Rule of Law' represent? 
 
 
 ## Image 4
@@ -55,7 +56,7 @@ knitr::include_graphics("img/global-income-dist.PNG")
 ```
 
 _Write your comments about image 4 below_
-
+In my opinion, it is slightly effective. The bottom and top axis are clearly represented and there is a clear title. The different countries grouped by colour is also useful. However, it is hard to tell which exact country has more yearly income per person as they are stacked; for example, does russia, central asia, etc. or latin america & caribbean have more? I think just a line plot would be more effective.
 
 
 # Data Visualization for Halloween 
@@ -67,7 +68,7 @@ library(tidyverse)
 library(ggplot2)
 
 # Install that package first 
-# install.packages("fivethirtyeight")
+install.packages("fivethirtyeight")
 library(fivethirtyeight)
 ```
 
@@ -85,6 +86,11 @@ Did you identify the type of variables, remember that this detail is crucial to 
 
 _Write your comments about results_
 
+There are 85 observations and 13 variables.
+Competitorname is a character,
+chocolate... pluribus is logical so true or false
+sugarpercent... winpercent is numerical 
+
 # Data viz - One variable at a time
 
 Just to use the logical variables as categories, run the following code chunk first!
@@ -99,8 +105,8 @@ candy_df <- candy_df %>%
 Complete the following code to get the data viz to represent "how many candies contain caramel via bar plot". Fill in the blanks, remove the # symbol in front of your code and the execute the code chunk via green play button.
 
 ```{r}
-# ggplot(candy_rankings, aes(x = ______)) +
-#  _____() +
+ggplot(candy_rankings, aes(x = caramel)) +
+geom_bar() 
 ```
 
 ## Exercise 3
@@ -108,7 +114,18 @@ Complete the following code to get the data viz to represent "how many candies c
 Now look at a numerical variable, such as `winpercent`. Create an histogram for this variable using ggplot2 functions below. Include informative x and y labels and a title, as a good practice.
 
 ```{r}
-# Your code here
+ggplot(data = candy_rankings,
+       mapping = aes(x = winpercent)
+       ) +
+  labs(x = "Win Percentage (%)",
+       y = "Number of Candies",
+       title = "Number of Candies Versus their Win Percentage"
+       ) +
+  theme_bw() +
+geom_histogram(bins = 20,
+              fill = "lightcyan", 
+              colour = "darkblue"
+              ) 
 
 ```
 
@@ -123,26 +140,54 @@ Fill in the blanks, remove the # symbol in front of your code and the execute th
 
 ```{r}
 # Your code here
-#ggplot(candy_df, aes(x = ___________)) +
-#  geom_histogram() +
-#  facet_wrap(___________)
+ggplot(candy_df, aes(x = winpercent,
+                     fill = caramel)) +
+  geom_histogram() +
+  facet_wrap(~caramel) +
+  stat_bin(bins = 30)
 
 ```
 
 
 - Consider adding the `fill = caramel` within the aes() vs. geom_histogram(), what do you get? 
 
+The graphs become different colours.
+
 ## Exercise 5
 
 Create a visualization that examines the relationship between a candy’s win percentage and whether it contains chocolate. Include x and y labels and a title. Describe any relationship you see.
 
 ```{r}
-# your code here
+ggplot(data = candy_rankings,
+mapping = aes(
+  y = winpercent,
+  x = chocolate)
+) +
+geom_boxplot() + 
+labs(
+  y = "Win percentage (%)",
+  x = "If candy contains chocolate",
+  title = "Candy's win percentage and whether it contains chocolate"
+)
+
+ggplot(data = candy_rankings,
+mapping = aes(
+  y = winpercent,
+  x = caramel)
+) +
+geom_boxplot() + 
+labs(
+  y = "Win percentage (%)",
+  x = "If candy contains caramel",
+  title = "Candy's win percentage and whether it contains caramel"
+)
 
 ```
 
 - Consider the similar pair by replacing chocolate with caramel, fruity and compare their results. 
 - Also include summary statistics details for this discussion by using the calculation below: 
+
+If the candy contains chocolate, it has a much higher chance of winning. For example, if it does contain chocolate then it has a 61% chance to win and without it only has a 42% chance to win on average. This is the same with if the candy contains caramel, but the gap between it cointaining and not containing caramel related to the win percentage is not as high than with the chocolate.
 
 ```{r}
 candy_rankings %>%
@@ -160,7 +205,14 @@ candy_rankings %>%
 Do more expensive candies win more often? Make a scatterplot of pricepercent (x) against winpercent (y). Describe their relationship.  
 
 ```{r}
-# your code here
+ggplot(data = candy_rankings,
+       mapping = aes(
+         x = pricepercent,
+         y = winpercent,
+         colour = chocolate
+       )) +
+  geom_point() +
+  facet_wrap(~ bar)
 
 ```
 
@@ -168,13 +220,20 @@ Do more expensive candies win more often? Make a scatterplot of pricepercent (x)
 - Add `color = chocolate` to add a third variable to the created visualization
 - How to facet this by using another categorical variable such as `bar`? 
 
+There is a slight positive correlation with price percent and win percent.
+
 
 ## Exercise 7
 
 Are chocolate candies more likely to be candy bars? Make a filled bar plot with chocolate on the x-axis and fill = bar. Describe what you see.
 
 ```{r}
-# Your code here
+ggplot(data = candy_rankings,
+       mapping = aes(
+         x = chocolate,
+         fill = bar
+       )) +
+  geom_bar() 
 
 ```
 
